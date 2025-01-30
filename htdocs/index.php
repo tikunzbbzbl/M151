@@ -29,5 +29,28 @@ echo "Vorname: $vorname\n";
 echo "Name: $name\n";
 echo "Jahrgang: $jahrgang\n <br>";
 echo "Mein Name ist $vorname $name und ich bin $jahrgang geboren.<br>";
-echo $text;
+echo $text . "<br>";
+
+$monate = [
+  "Januar", "Februar", "März", "April", "Mai", "Juni",
+  "Juli", "August", "September", "Oktober", "November", "Dezember"
+];
+
+print_r($monate);
+
+
+$monate2 = [
+  1 => "Januar", 2 => "Februar", 3 => "März", 4 => "April",
+  5 => "Mai", 6 => "Juni", 7 => "Juli", 8 => "August",
+  9 => "September", 10 => "Oktober", 11 => "November", 12 => "Dezember"
+];
+
+$monat2 = date("F"); // Holt den Monat
+
+//echo date("n");  // 1-12 (Monat ohne führende Null)
+//echo date("m");  // 01-12 (Monat mit führender Null)
+//echo date("F");  // Vollständiger Monatsname (z. B. "Januar")
+//echo date("M");  // Abgekürzter Monatsname (z. B. "Jan")
+
+echo "<br> Monat ist: " . $monat2;
 ?>
