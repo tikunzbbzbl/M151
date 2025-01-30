@@ -18,7 +18,7 @@
 // 2. Mit dem Zuweisungsoperator (.=), um einen bestehenden String zu erweitern
 
 $text = "Hallo";
-$text .= " Welt!"; // Ergebnis: "Hallo Welt!"
+$text .= " Welt"; // Ergebnis: "Hallo Welt!"
 
 $vorname = "Tim"; // String
 $name = "Kunz"; // String
