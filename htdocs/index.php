@@ -1,92 +1,107 @@
-<!DOCTYPE html>
-<html lang="<?php echo $language; ?>">
-  <head>
-    <meta charset="UTF-8">
-    <title>Auträge M151</title>
-  </head>
-  <body>
-    "Übung macht den Meister" <br>
-    "es ist noch kein Meister vom Himmel gefallen" <br>
-  </body>
-</html>
 <?php
-// Vorname und Name als String gespeichert werden, muss man sie in Anführungszeichen schreiben.
-// Der Jahrgang wird ohne Anführungszeichen gespeichert, da es eine Zahl ist
 
-//How-To String
-// 1. Mit dem Punkt (.) Operator
-// 2. Mit dem Zuweisungsoperator (.=), um einen bestehenden String zu erweitern
+// Initialisierung
+$error = '';
+$firstname = $lastname = $email = $username = '';
 
-$text = "Hallo";
-$text .= " Welt"; // Ergebnis: "Hallo Welt!"
+// Wurden Daten mit "POST" gesendet?
+if($_SERVER['REQUEST_METHOD'] == "POST"){
+  // Ausgabe des gesamten $_POST Arrays zum debuggen
+  echo "<pre>";
+  print_r($_POST);
+  echo "</pre>";
 
-$vorname = "Tim"; // String
-$name = "Kunz"; // String
-$jahrgang = 1998; // Zahl 
+  /** TODO 
+   * alle Benutzereingaben gemäss Auftrag validieren
+   * Variable vorhanden
+   * nicht leer
+   * minimale Länge
+   * maximale Länge
+   * 
+   * sonst Fehlermeldung an Variable $error anhängen.
+   * $error .= "Geben Sie bitte einen korrekten Vornamen ein";
+   */
 
-// Ausgabe der Variablen
-echo "Vorname: $vorname\n";
-echo "Name: $name\n";
-echo "Jahrgang: $jahrgang\n <br>";
-echo "Mein Name ist $vorname $name und ich bin $jahrgang geboren.<br>";
-echo $text . "<br>";
-
-$monate = [
-  "Januar", "Februar", "März", "April", "Mai", "Juni",
-  "Juli", "August", "September", "Oktober", "November", "Dezember"
-];
-
-print_r($monate);
-
-
-$monat2 = date("F"); // Holt den Monat
-
-//echo date("n");  // 1-12 (Monat ohne führende Null)
-//echo date("m");  // 01-12 (Monat mit führender Null)
-//echo date("F");  // Vollständiger Monatsname (z. B. "Januar")
-//echo date("M");  // Abgekürzter Monatsname (z. B. "Jan")
-
-echo "<br> Monat ist: " . $monat2;
-sort($monate);
-foreach($monate as $monat){
-  echo "<br>". $monat ."<br>";
+  // keine Fehler vorhanden
+  if(empty($error)){
+    $message = "Keine Fehler vorhanden";
+  }
 }
 
-$a = 10;
-$b = 3;
-
-echo "<br>Grundlegende mathematische Operatoren:<br>";
-echo "Addition: $a + $b = " . ($a + $b) . "<br>";  // Addition
-echo "Subtraktion: $a - $b = " . ($a - $b) . "<br>";  // Subtraktion
-echo "Multiplikation: $a * $b = " . ($a * $b) . "<br>";  // Multiplikation
-echo "Division: $a / $b = " . ($a / $b) . "<br>";  // Division
-echo "Modulus (Rest der Division): $a % $b = " . ($a % $b) . "<br>";  // Modulo
-
-echo "<br>Erweiterte mathematische Operatoren:<br>";
-echo "Potenzierung: $a ** $b = " . ($a ** $b) . "<br>";  // Potenzierung (10^3 = 1000)
-echo "Ganzzahlige Division: intdiv($a, $b) = " . intdiv($a, $b) . "<br>";  // Ganzzahlige Division
-
-echo "<br>Inkrement und Dekrement:<br>";
-$a++;
-echo "Post-Inkrement (\$a++): $a<br>";  // Erhöht um 1
-$a--;
-echo "Post-Dekrement (\$a--): $a<br>";  // Verringert um 1
-++$a;
-echo "Pre-Inkrement (++\$a): $a<br>";  // Erhöht um 1 vor Verwendung
---$a;
-echo "Pre-Dekrement (--\$a): $a<br>";  // Verringert um 1 vor Verwendung
-
-/*
-+ Addition
-- Subtraktion
-* Multiplikation
-/ Division
-% Modulo (Rest einer Division)
-** Potenzierung (a ** b → a hoch b)
-intdiv(a, b) Ganzzahlige Division (z. B. 10 / 3 = 3, ohne Nachkommastellen)
-++ Erhöht eine Zahl um 1 ($a++, ++$a)
--- Verringert eine Zahl um 1 ($a--, --$a)
-*/
 
 
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registrierung</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  </head>
+  <body>
+
+    <div class="container">
+      <h1>Registrierung</h1>
+      <p>
+        Bitte registrieren Sie sich, damit Sie diesen Dienst benutzen können.
+      </p>
+      <?php
+        // Ausgabe der Fehlermeldungen
+        if(strlen($error)){
+          echo "<div class=\"alert alert-danger\" role=\"alert\">" . $error . "</div>";
+        } elseif (strlen($message)){
+          echo "<div class=\"alert alert-success\" role=\"alert\">" . $message . "</div>";
+        }
+      ?>
+      <form action="" method="post">
+        <!-- TODO: Clientseitige Validierung: vorname -->
+        <div class="form-group">
+          <label for="firstname">Vorname *</label>
+          <input type="text" name="firstname" class="form-control" id="firstname"
+                  value="<?php echo htmlspecialchars($firstname) ?>"
+                  placeholder="Geben Sie Ihren Vornamen an.">
+        </div>
+        <!-- TODO: Clientseitige Validierung: nachname -->
+        <div class="form-group">
+          <label for="lastname">Nachname *</label>
+          <input type="text" name="lastname" class="form-control" id="lastname"
+                  value="<?php echo htmlspecialchars($lastname) ?>"
+                  placeholder="Geben Sie Ihren Nachnamen an">
+        </div>
+        <!-- TODO: Clientseitige Validierung: email -->
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" name="email" class="form-control" id="email"
+                  value="<?php echo $email ?>"
+                  placeholder="Geben Sie Ihre Email-Adresse an.">
+        </div>
+        <!-- TODO: Clientseitige Validierung: benutzername -->
+        <div class="form-group">
+          <label for="username">Benutzername *</label>
+          <input type="text" name="username" class="form-control" id="username"
+                  value="<?php echo htmlspecialchars($username) ?>"
+                  placeholder="Gross- und Keinbuchstaben, min 6 Zeichen.">
+        </div>
+        <!-- TODO: Clientseitige Validierung: password -->
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input type="password" name="password" class="form-control" id="password"
+                  placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
+        </div>
+        <button type="submit" name="button" value="submit" class="btn btn-info">Senden</button>
+        <button type="reset" name="button" value="reset" class="btn btn-warning">Löschen</button>
+      </form>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  </body>
+</html>
