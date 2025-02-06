@@ -12,20 +12,29 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
   print_r($_POST);
   echo "</pre>";
 
-
-if (empty($_POST["firstname"]) || empty($_POST["lastname"]) || empty($_POST["username"])){
-    $error = "Vor- und Nachname und Benutzername erforderlich!";
-} elseif (strlen($_POST["firstname"]) > 30 || strlen($_POST["lastname"]) > 30 || strlen($_POST["username"]) > 30) {
-    $error = "Maximal 30 Zeichen erlaubt in Vor- und Nachname und Benutzername!";
-} else {
+if(isset($_POST["firstname"]) && isset($_POST["lastname"]) && isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password"])){
+if (empty($_POST["firstname"]) || empty($_POST["lastname"]) || empty($_POST["username"]) || empty($_POST["password"])){
+    $error = "Felder sind erforderlich!";
+} elseif (strlen($_POST["firstname"]) > 30 && trim($_POST["firstname"]) || strlen($_POST["lastname"]) > 30 && trim($_POST["lastname"]) || strlen($_POST["username"]) > 30 && trim($_POST["username"]) > 30) {
+    $error = "Leer oder maximal 30 Zeichen erlaubt in Vor- und Nachname und Benutzername!";
+} elseif(!preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $_POST['password'])) { 
+  $error .= "Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute"; 
+}
+else {
     $firstname = htmlspecialchars($_POST["firstname"]);
     $lastname = htmlspecialchars($_POST["lastname"]);
     $username = htmlspecialchars($_POST["username"]);
 }
+
+
+
 if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
   $error .= "Ungültige E-Mail-Adresse!<br>";
 } else {
   $email = htmlspecialchars($_POST["email"]);
+}
+}else{ 
+  $error .= "Error";
 }
   /** TODO 
    * alle Benutzereingaben gemäss Auftrag validieren
@@ -106,8 +115,8 @@ if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
         </div>
         <!-- TODO: Clientseitige Validierung: password -->
         <div class="form-group">
-          <label for="password">Password *</label>
-          <input type="password" name="password" maxlength="255" class="form-control" id="password"
+          <label for="password">Passwort *</label>
+          <input type="password" name="password" maxlength="255" class="form-control" id="password" pattern="^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])(?=\S*?[\W_]).{8,})\S$"
                   required placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
         </div>
         <button type="submit" name="button" value="submit" class="btn btn-info">Senden</button>
