@@ -12,12 +12,15 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
   print_r($_POST);
   echo "</pre>";
 
-if(isset($_POST["firstname"]) && isset($_POST["lastname"]) && isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password"])){
-if (empty($_POST["firstname"]) || empty($_POST["lastname"]) || empty($_POST["username"]) || empty($_POST["password"])){
+if(isset($_POST["firstname"]) && isset($_POST["lastname"]) && isset($_POST["username"]) && isset($_POST["email"]) && isset($_POST["password"]) && isset($_POST["password_confirm"])){
+if (empty($_POST["firstname"]) || empty($_POST["lastname"]) || empty($_POST["username"]) || empty($_POST["password"]) || empty($_POST["password_confirm"])){
     $error = "Felder sind erforderlich!";
 } elseif (strlen($_POST["firstname"]) > 30 && trim($_POST["firstname"]) || strlen($_POST["lastname"]) > 30 && trim($_POST["lastname"]) || strlen($_POST["username"]) > 30 && trim($_POST["username"]) > 30) {
     $error = "Leer oder maximal 30 Zeichen erlaubt in Vor- und Nachname und Benutzername!";
-} elseif(!preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $_POST['password'])) { 
+} elseif(!preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $_POST['password'])) {     
+  if ($password !== $password_confirm) {
+  echo "Die Passwörter stimmen nicht überein!";
+} 
   $error .= "Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute"; 
 }
 else {
@@ -116,8 +119,13 @@ if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
         <!-- TODO: Clientseitige Validierung: password -->
         <div class="form-group">
           <label for="password">Passwort *</label>
-          <input type="password" name="password" maxlength="255" class="form-control" id="password" pattern="^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])(?=\S*?[\W_]).{8,})\S$"
+          <input type="password" name="password" maxlength="255" required minlength="8" class="form-control" id="password" pattern="^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])(?=\S*?[\W_]).{8,})\S$"
                   required placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
+        </div>
+        <div class="form-group">
+          <label for="password_confirm">Passwort bestätigen *</label>
+          <input type="password" name="password_confirm" maxlength="255" required minlength="8" class="form-control" id="password" pattern="^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])(?=\S*?[\W_]).{8,})\S$"
+                  required placeholder="Passwort nochmals">
         </div>
         <button type="submit" name="button" value="submit" class="btn btn-info">Senden</button>
         <button type="reset" name="button" value="reset" class="btn btn-warning">Löschen</button>
