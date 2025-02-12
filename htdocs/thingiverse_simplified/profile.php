@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 }
 ?>
-<?php include 'header.php'; ?>
+<?php include 'includes/header.php'; ?>
 <h1>Profil von <?php echo escape($user['username']); ?></h1>
 <?php if ($success): ?>
     <div style="color:green;">
@@ -125,4 +125,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Ändern</button>
     </fieldset>
 </form>
-<?php include 'footer.php'; ?>
+<?php include 'includes/footer.php'; ?>

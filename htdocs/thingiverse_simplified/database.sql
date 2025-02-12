@@ -1,9 +1,9 @@
--- Erstelle die Datenbank
-CREATE DATABASE thingiverse_simplified CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- database.sql
+CREATE DATABASE IF NOT EXISTS thingiverse_simplified CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE thingiverse_simplified;
 
--- Erstelle die Tabelle für Benutzer
-CREATE TABLE users (
+-- Tabelle für Benutzer
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -12,18 +12,23 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Erstelle die Tabelle für Kreationen
-CREATE TABLE kreationen (
+-- Tabelle für Kreationen
+CREATE TABLE IF NOT EXISTS kreationen (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    image VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Lege den eingeschränkten Benutzer an und weise Rechte zu
-CREATE USER 'user1'@'localhost' IDENTIFIED BY 'pass';
-GRANT SELECT, INSERT, UPDATE, DELETE ON thingiverse_simplified.* TO 'user1'@'localhost';
-FLUSH PRIVILEGES;
+-- Tabelle für Dateien, die zu einer Kreation gehören
+CREATE TABLE IF NOT EXISTS kreation_files (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kreation_id INT NOT NULL,
+    file_name VARCHAR(255) NOT NULL,
+    file_type VARCHAR(50) NOT NULL,
+    is_thumbnail TINYINT(1) DEFAULT 0,  -- 1 = Thumbnail, 0 = normale Datei
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (kreation_id) REFERENCES kreationen(id) ON DELETE CASCADE
+);

@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-<?php include 'header.php'; ?>
+<?php include 'includes/header.php'; ?>
 <h1>Registrieren</h1>
 <?php if (!empty($errors)): ?>
     <div style="color:red;">
@@ -66,4 +66,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <button type="submit">Registrieren</button>
 </form>
-<?php include 'footer.php'; ?>
+<?php include 'includes/footer.php'; ?>
