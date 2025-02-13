@@ -3,7 +3,7 @@
 ?>
 </div>
 <footer>
-    <p style="text-align:center;">&copy; <?php echo date("Y"); ?> M151 Projekt von Tim Kunz; Thingiverse Simplified</p>
+    <p style="text-align:center;">&copy; <?php echo date("Y"); ?> M151 Projekt von Tim Kunz; SYT</p>
 </footer>
 </body>
 </html>

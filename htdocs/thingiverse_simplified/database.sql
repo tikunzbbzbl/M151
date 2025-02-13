@@ -32,3 +32,6 @@ CREATE TABLE IF NOT EXISTS kreation_files (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (kreation_id) REFERENCES kreationen(id) ON DELETE CASCADE
 );
+CREATE USER IF NOT EXISTS 'user1'@'localhost' IDENTIFIED BY 'pass';
+GRANT SELECT, INSERT, UPDATE, DELETE ON thingiverse_simplified.* TO 'user1'@'localhost';
+FLUSH PRIVILEGES;
