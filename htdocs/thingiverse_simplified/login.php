@@ -1,27 +1,33 @@
 <?php
-// login.php – Ermöglicht die Anmeldung (C14)
+// login.php
 require_once 'includes/db.php';
 require_once 'includes/functions.php';
 secure_session_start();
 
 $errors = [];
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Benutzereingaben
+    $username = trim($_POST['username'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    
     if (empty($username) || empty($password)) {
-        $errors[] = "Benutzername und Passwort müssen ausgefüllt sein.";
-    } else {
-        // Hole Benutzerinformationen
-        $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
+        $errors[] = "Bitte alle Felder ausfüllen.";
+    }
+    
+    if (empty($errors)) {
+        // Benutzer aus der Datenbank abfragen
+        $stmt = $pdo->prepare("SELECT id, username, password, is_admin FROM users WHERE username = :username");
         $stmt->execute([':username' => $username]);
         $user = $stmt->fetch();
-
+        
         if ($user && password_verify($password, $user['password'])) {
-            // Login erfolgreich, Session-Daten setzen (C8, C10)
+            // Session regenerieren und Daten speichern
             session_regenerate_id(true);
-            $_SESSION['user_id']   = $user['id'];
-            $_SESSION['username']  = $username;
+            $_SESSION['user_id']  = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['is_admin'] = ($user['is_admin'] == 1); // Admin-Status als boolscher Wert
+            
             header("Location: index.php");
             exit;
         } else {
@@ -31,19 +37,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <?php include 'includes/header.php'; ?>
-<h1>Anmelden</h1>
-<?php if (!empty($errors)): ?>
-    <div style="color:red;">
-        <?php foreach ($errors as $error) echo "<p>" . escape($error) . "</p>"; ?>
+<div class="container mt-5">
+  <h1>Anmelden</h1>
+  <?php if (!empty($errors)): ?>
+    <div class="alert alert-danger">
+      <?php foreach ($errors as $error): ?>
+        <p><?php echo escape($error); ?></p>
+      <?php endforeach; ?>
     </div>
-<?php endif; ?>
-<form action="login.php" method="post">
-    <label for="username">Benutzername:</label>
-    <input type="text" name="username" id="username" required value="<?php echo isset($username) ? escape($username) : ''; ?>"><br>
-
-    <label for="password">Passwort:</label>
-    <input type="password" name="password" id="password" required><br>
-
-    <button type="submit">Anmelden</button>
-</form>
+  <?php endif; ?>
+  <form action="login.php" method="post">
+    <div class="form-group">
+      <label for="username">Benutzername:</label>
+      <input type="text" name="username" id="username" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Passwort:</label>
+      <input type="password" name="password" id="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Anmelden</button>
+  </form>
+</div>
 <?php include 'includes/footer.php'; ?>

@@ -3,8 +3,8 @@
 // Verbindung zur Datenbank mittels PDO – es wird ein Benutzer mit eingeschränkten Rechten genutzt.
 $host   = 'localhost';
 $dbname = 'thingiverse_simplified';
-$user   = 'user1'; // bitte entsprechend anpassen
-$pass   = 'pass';     // bitte entsprechend anpassen
+$user   = 'user1';
+$pass   = 'pass';
 $dsn    = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
 
 try {

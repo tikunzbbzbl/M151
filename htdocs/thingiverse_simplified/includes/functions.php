@@ -28,7 +28,11 @@ function secure_session_start() {
         session_regenerate_id(true); // Verhindert Session Fixation
     }
 }
-
+// Füge das am Anfang von includes/functions.php ein (vor secure_session_start())
+if (!defined('BASE_URL')) {
+    // Passe den Pfad an, je nachdem, wie dein Projekt erreichbar ist.
+    define('BASE_URL', '/');
+}
 
 // Prüft, ob der Benutzer angemeldet ist (C8)
 function is_logged_in() {
