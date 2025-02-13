@@ -1,7 +1,7 @@
 </div>
   <footer class="bg-light text-center mt-3 py-3">
     <div class="container">
-      <p class="mb-0">&copy; <?php echo date("Y"); ?> TModul 151 Projekt "SYT: Share your Triumph"</p>
+      <p class="mb-0">&copy; <?php echo date("Y"); ?> Modul 151 Projekt "SYT: Share your Triumph"</p>
     </div>
   </footer>
   <!-- Bootstrap JS -->
