@@ -35,14 +35,14 @@ $totalFiles = $stmtFiles->fetchColumn();
                 </div>
             </div>
         </div>
-        <!-- Kreationen Statistik -->
+        <!-- Posts Statistik -->
         <div class="col-md-4">
             <div class="card text-white bg-success mb-3">
                 <div class="card-header">Posts</div>
                 <div class="card-body">
                     <h5 class="card-title"><?php echo $totalKreationen; ?></h5>
                     <p class="card-text">Gesamtzahl der hochgeladenen Posts.</p>
-                    <a href="manage_kreationen.php" class="btn btn-light">Verwalten</a>
+                    <a href="manage_posts.php" class="btn btn-light">Verwalten</a>
                 </div>
             </div>
         </div>
