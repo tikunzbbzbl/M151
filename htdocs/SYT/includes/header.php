@@ -15,6 +15,8 @@ secure_session_start();
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Einbindung von Bootstrap CSS über ein Content Delivery Network (CDN) -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="icon" href="uploads/motorcycle_icon.ico" type="image/x-icon">
+
   <style>
     /* Setzt den Standard-Margin und Padding des Body-Elements auf 0 */
     body { margin: 0; padding: 0; }
