@@ -1,5 +1,7 @@
--- database.sql
-CREATE DATABASE IF NOT EXISTS thingiverse_simplified CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- Erstelle die Datenbank (falls sie noch nicht existiert)
+CREATE DATABASE IF NOT EXISTS thingiverse_simplified 
+  CHARACTER SET utf8mb4 
+  COLLATE utf8mb4_unicode_ci;
 USE thingiverse_simplified;
 
 -- Tabelle für Benutzer
@@ -9,10 +11,11 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     profile_picture VARCHAR(255) DEFAULT NULL,
+    is_admin TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabelle für Kreationen
+-- Tabelle für Kreationen (Posts)
 CREATE TABLE IF NOT EXISTS kreationen (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,

@@ -4,30 +4,39 @@ require_once '../includes/db.php';
 require_once '../includes/functions.php';
 secure_session_start();
 
+// Nur Admins dürfen diesen Bereich nutzen
 if (!is_logged_in() || empty($_SESSION['is_admin'])) {
     header("Location: ../login.php");
     exit;
 }
 
+// Prüfe, ob eine gültige ID übergeben wurde
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Ungültige Anfrage.");
 }
-
 $post_id = (int)$_GET['id'];
 
-// Optional: Existenz prüfen
-$stmt = $pdo->prepare("SELECT * FROM kreationen WHERE id = :id");
-$stmt->execute([':id' => $post_id]);
-$post = $stmt->fetch();
+// Alle zu diesem Post gehörenden Dateien abrufen
+$stmtFiles = $pdo->prepare("SELECT file_name FROM kreation_files WHERE kreation_id = :kid");
+$stmtFiles->execute([':kid' => $post_id]);
+$files = $stmtFiles->fetchAll();
 
-if (!$post) {
-    die("Post nicht gefunden.");
+// Jede Datei aus dem Dateisystem löschen
+foreach ($files as $file) {
+    $filePath = '../uploads/' . $file['file_name'];
+    if (file_exists($filePath)) {
+        unlink($filePath);
+    }
 }
 
-// Post löschen (und damit automatisch zugehörige Dateien)
-$stmt = $pdo->prepare("DELETE FROM kreationen WHERE id = :id");
-$stmt->execute([':id' => $post_id]);
+// Lösche die Dateieinträge in der Datenbank
+$stmtDelFiles = $pdo->prepare("DELETE FROM kreation_files WHERE kreation_id = :kid");
+$stmtDelFiles->execute([':kid' => $post_id]);
 
-header("Location: manage_posts.php");
+// Lösche den Post (Kreation)
+$stmtDelPost = $pdo->prepare("DELETE FROM kreationen WHERE id = :id");
+$stmtDelPost->execute([':id' => $post_id]);
+
+header("Location: manage_kreationen.php");
 exit;
 ?>

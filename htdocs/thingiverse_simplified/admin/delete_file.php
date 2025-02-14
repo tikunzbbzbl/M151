@@ -15,7 +15,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $file_id = (int)$_GET['id'];
 
-// Dateidaten abrufen
+// Datei aus der Datenbank abrufen
 $stmt = $pdo->prepare("SELECT file_name FROM kreation_files WHERE id = :id");
 $stmt->execute([':id' => $file_id]);
 $file = $stmt->fetch();
@@ -24,15 +24,15 @@ if (!$file) {
     die("Datei nicht gefunden.");
 }
 
-// Datei aus dem Dateisystem löschen (Pfad anpassen, falls uploads/ in einem anderen Ordner liegt)
-$file_path = '../uploads/' . $file['file_name'];
-if (file_exists($file_path)) {
-    unlink($file_path);
+// Datei im Dateisystem löschen
+$filePath = '../uploads/' . $file['file_name'];
+if (file_exists($filePath)) {
+    unlink($filePath);
 }
 
-// Eintrag aus der Datenbank löschen
-$stmt = $pdo->prepare("DELETE FROM kreation_files WHERE id = :id");
-$stmt->execute([':id' => $file_id]);
+// Datenbankeintrag löschen
+$stmtDel = $pdo->prepare("DELETE FROM kreation_files WHERE id = :id");
+$stmtDel->execute([':id' => $file_id]);
 
 header("Location: manage_files.php");
 exit;

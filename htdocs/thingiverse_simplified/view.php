@@ -4,18 +4,14 @@ require_once 'includes/db.php';
 require_once 'includes/functions.php';
 secure_session_start();
 
-// Serverseitige Validierung
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Ungültige Anfrage.");
 }
 $id = (int)$_GET['id'];
 
-// Hole die Kreation und das Profilbild
+// Hole Kreation inkl. Erstellerinformationen
 $stmt = $pdo->prepare("
-    SELECT 
-      k.*, 
-      u.username,
-      u.profile_picture
+    SELECT k.*, u.username, u.profile_picture
     FROM kreationen k
     JOIN users u ON k.user_id = u.id
     WHERE k.id = :id
@@ -27,20 +23,16 @@ if (!$kreation) {
     die("Kreation nicht gefunden.");
 }
 
-// Dateien abrufen (falls du sie anzeigen möchtest)
-$stmtFiles = $pdo->prepare("SELECT file_name, file_type, is_thumbnail FROM kreation_files WHERE kreation_id = :kid");
+// Hole alle Dateien (alle Bilder und andere Dateien)
+$stmtFiles = $pdo->prepare("SELECT file_name, file_type, is_thumbnail FROM kreation_files WHERE kreation_id = :kid ORDER BY uploaded_at ASC");
 $stmtFiles->execute([':kid' => $id]);
 $files = $stmtFiles->fetchAll();
 ?>
 <?php include 'includes/header.php'; ?>
 <h1><?php echo escape($kreation['title']); ?></h1>
-<div style="display:flex; align-items:center; margin-bottom:10px;">
+<div class="d-flex align-items-center mb-3">
   <?php
-    if (!empty($kreation['profile_picture'])) {
-        $profilePic = 'uploads/' . $kreation['profile_picture'];
-    } else {
-        $profilePic = 'uploads/placeholder.png'; 
-    }
+    $profilePic = !empty($kreation['profile_picture']) ? 'uploads/' . $kreation['profile_picture'] : 'uploads/placeholder.png';
   ?>
   <img src="<?php echo escape($profilePic); ?>" alt="Profilbild" style="width:40px; height:40px; object-fit:cover; border-radius:50%; margin-right:10px;">
   <p>Erstellt von: <?php echo escape($kreation['username']); ?></p>
@@ -49,7 +41,7 @@ $files = $stmtFiles->fetchAll();
   <p><?php echo nl2br(escape($kreation['description'])); ?></p>
 <?php endif; ?>
 
-<!-- Beispiel: Dateien anzeigen -->
+<h2>Dateien</h2>
 <div class="row">
   <?php foreach ($files as $file): ?>
     <div class="col-md-4 mb-3">
@@ -58,10 +50,10 @@ $files = $stmtFiles->fetchAll();
           <img src="uploads/<?php echo escape($file['file_name']); ?>" class="card-img-top" alt="Datei">
         <?php else: ?>
           <div class="card-body">
-            <p><?php echo escape($file['file_name']); ?></p>
+            <p>Datei: <?php echo escape($file['file_name']); ?></p>
           </div>
         <?php endif; ?>
-        <div class="card-footer">
+        <div class="card-footer text-center">
           <a href="download.php?file=<?php echo urlencode($file['file_name']); ?>" class="btn btn-success">Download</a>
         </div>
       </div>

@@ -1,19 +1,19 @@
 <?php
-// profile.php – Benutzerprofil (C8, C15)
+// profil/edit_profile.php
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 secure_session_start();
 
 if (!is_logged_in()) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 
 $errors  = [];
 $success = '';
 
-// Hole aktuelle Benutzerdaten
-$stmt = $pdo->prepare("SELECT username, email, profile_picture FROM users WHERE id = :id");
+// Aktuelle Benutzerdaten abrufen
+$stmt = $pdo->prepare("SELECT id, username, email, profile_picture FROM users WHERE id = :id");
 $stmt->execute([':id' => $_SESSION['user_id']]);
 $user = $stmt->fetch();
 
@@ -21,108 +21,119 @@ if (!$user) {
     die("Benutzer nicht gefunden.");
 }
 
-// Verarbeitung des Formulars:
+// Verarbeitung des Formulars
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Benutzername ändern
-    if (isset($_POST['new_username'])) {
-        $new_username = trim($_POST['new_username']);
+
+    // Wenn das Profil-Update (Benutzername und E-Mail) gesendet wurde
+    if (isset($_POST['update_profile'])) {
+        $new_username = trim($_POST['new_username'] ?? '');
+        $new_email    = trim($_POST['new_email'] ?? '');
+
         if (empty($new_username)) {
             $errors[] = "Benutzername darf nicht leer sein.";
-        } else {
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE username = :username AND id != :id");
-            $stmt->execute([':username' => $new_username, ':id' => $_SESSION['user_id']]);
-            if ($stmt->fetch()) {
-                $errors[] = "Benutzername ist bereits vergeben.";
-            } else {
-                $stmt = $pdo->prepare("UPDATE users SET username = :username WHERE id = :id");
-                $stmt->execute([':username' => $new_username, ':id' => $_SESSION['user_id']]);
-                $_SESSION['username'] = $new_username;
-                $success = "Benutzername erfolgreich geändert.";
-            }
+        }
+        if (empty($new_email) || !filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Bitte eine gültige E-Mail-Adresse eingeben.";
+        }
+
+        // Prüfen, ob der neue Benutzername oder die E-Mail bereits vergeben ist (außer dem eigenen Datensatz)
+        $stmtCheck = $pdo->prepare("SELECT id FROM users WHERE (username = :username OR email = :email) AND id != :id");
+        $stmtCheck->execute([
+            ':username' => $new_username,
+            ':email'    => $new_email,
+            ':id'       => $_SESSION['user_id']
+        ]);
+        if ($stmtCheck->fetch()) {
+            $errors[] = "Benutzername oder E-Mail ist bereits vergeben.";
+        }
+
+        if (empty($errors)) {
+            $stmtUpdate = $pdo->prepare("UPDATE users SET username = :username, email = :email WHERE id = :id");
+            $stmtUpdate->execute([
+                ':username' => $new_username,
+                ':email'    => $new_email,
+                ':id'       => $_SESSION['user_id']
+            ]);
+            $_SESSION['username'] = $new_username;
+            $success = "Profil erfolgreich aktualisiert.";
         }
     }
-    // Passwort ändern
-    if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])) {
-        $new_password         = $_POST['new_password'];
-        $confirm_new_password = $_POST['confirm_new_password'];
-        if (!empty($new_password)) {
-            if ($new_password !== $confirm_new_password) {
-                $errors[] = "Die neuen Passwörter stimmen nicht überein.";
-            } else {
-                $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("UPDATE users SET password = :password WHERE id = :id");
-                $stmt->execute([':password' => $password_hash, ':id' => $_SESSION['user_id']]);
-                $success = "Passwort erfolgreich geändert.";
-            }
-        }
-    }
-    // Profilbild ändern
-    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == UPLOAD_ERR_OK) {
+
+    // Wenn ein neues Profilbild hochgeladen wurde
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-        if (in_array($_FILES['profile_picture']['type'], $allowed_types)) {
-            $ext = pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION);
+        if (!in_array($_FILES['profile_picture']['type'], $allowed_types)) {
+            $errors[] = "Nur JPEG, PNG und GIF sind erlaubt.";
+        } else {
+            $ext = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
+            // Neuen Dateinamen generieren, z. B. "profile_{user_id}.{ext}"
             $new_filename = 'profile_' . $_SESSION['user_id'] . '.' . $ext;
-            $destination  = 'uploads/' . $new_filename;
+            // Da sich diese Datei im Ordner "profil" befindet, greifen wir auf den uploads-Ordner im Root zu:
+            $destination = __DIR__ . "/../uploads/" . $new_filename;
             if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $destination)) {
-                $stmt = $pdo->prepare("UPDATE users SET profile_picture = :picture WHERE id = :id");
-                $stmt->execute([':picture' => $new_filename, ':id' => $_SESSION['user_id']]);
-                $success = "Profilbild erfolgreich geändert.";
+                $stmtPic = $pdo->prepare("UPDATE users SET profile_picture = :picture WHERE id = :id");
+                $stmtPic->execute([':picture' => $new_filename, ':id' => $_SESSION['user_id']]);
+                $success = "Profilbild erfolgreich aktualisiert.";
             } else {
                 $errors[] = "Fehler beim Hochladen des Profilbildes.";
             }
-        } else {
-            $errors[] = "Nur JPEG, PNG und GIF sind erlaubt.";
         }
     }
-    // Hole die aktuellen Daten neu
-    $stmt = $pdo->prepare("SELECT username, email, profile_picture FROM users WHERE id = :id");
+    
+    // Benutzerinformationen neu laden
+    $stmt = $pdo->prepare("SELECT id, username, email, profile_picture FROM users WHERE id = :id");
     $stmt->execute([':id' => $_SESSION['user_id']]);
     $user = $stmt->fetch();
 }
 ?>
 <?php include '../includes/header.php'; ?>
-<h1>Profil von <?php echo escape($user['username']); ?></h1>
-<?php if ($success): ?>
-    <div style="color:green;">
-        <p><?php echo escape($success); ?></p>
-    </div>
-<?php endif; ?>
-<?php if (!empty($errors)): ?>
-    <div style="color:red;">
-        <?php foreach ($errors as $error) echo "<p>" . escape($error) . "</p>"; ?>
-    </div>
-<?php endif; ?>
-
-<!-- Formular zur Änderung von Benutzername, Passwort und Profilbild -->
-<form action="profile.php" method="post" enctype="multipart/form-data">
-    <fieldset>
-        <legend>Benutzername ändern</legend>
-        <label for="new_username">Neuer Benutzername:</label>
-        <input type="text" name="new_username" id="new_username" value="<?php echo escape($user['username']); ?>" required>
-        <button type="submit">Ändern</button>
-    </fieldset>
-</form>
-<br>
-<form action="profile.php" method="post">
-    <fieldset>
-        <legend>Passwort ändern</legend>
-        <label for="new_password">Neues Passwort:</label>
-        <input type="password" name="new_password" id="new_password" required>
-        <label for="confirm_new_password">Neues Passwort wiederholen:</label>
-        <input type="password" name="confirm_new_password" id="confirm_new_password" required>
-        <button type="submit">Ändern</button>
-    </fieldset>
-</form>
-<br>
-<form action="profile.php" method="post" enctype="multipart/form-data">
-    <fieldset>
-        <legend>Profilbild ändern</legend>
-        <?php if (!empty($user['profile_picture'])): ?>
-            <img src="uploads/<?php echo escape($user['profile_picture']); ?>" alt="Profilbild" style="max-width:100px;"><br>
-        <?php endif; ?>
-        <label for="profile_picture">Neues Profilbild (JPEG, PNG, GIF):</label>
-        <input type="file" name="profile_picture" id="profile_picture" accept="image/jpeg, image/png, image/gif" required>
-        <button type="submit">Ändern</button>
-    </fieldset>
-</form>
+<div class="container mt-5">
+    <h1>Profil bearbeiten</h1>
+    <?php if ($success): ?>
+        <div class="alert alert-success">
+            <p><?php echo escape($success); ?></p>
+        </div>
+    <?php endif; ?>
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+            <?php foreach ($errors as $error): ?>
+                <p><?php echo escape($error); ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+    <!-- Formular zur Aktualisierung von Benutzername und E-Mail -->
+    <form action="edit_profile.php" method="post" class="mb-4">
+        <fieldset class="border p-3">
+            <legend>Profil aktualisieren</legend>
+            <div class="form-group">
+                <label for="new_username">Benutzername:</label>
+                <input type="text" name="new_username" id="new_username" class="form-control" value="<?php echo escape($user['username']); ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="new_email">E-Mail:</label>
+                <input type="email" name="new_email" id="new_email" class="form-control" value="<?php echo escape($user['email']); ?>" required>
+            </div>
+            <button type="submit" name="update_profile" class="btn btn-primary">Profil aktualisieren</button>
+        </fieldset>
+    </form>
+    <!-- Formular zum Ändern des Profilbildes -->
+    <form action="edit_profile.php" method="post" enctype="multipart/form-data">
+        <fieldset class="border p-3 mb-3">
+            <legend>Profilbild ändern</legend>
+            <?php 
+            // Zeige aktuelles Profilbild oder Platzhalter an
+            $profilePic = !empty($user['profile_picture']) ? '../uploads/' . $user['profile_picture'] : '../uploads/placeholder.png';
+            ?>
+            <div class="form-group">
+                <img src="<?php echo escape($profilePic); ?>" alt="Profilbild" style="max-width:150px; margin-bottom:10px;">
+            </div>
+            <div class="form-group">
+                <label for="profile_picture">Neues Profilbild (JPEG, PNG, GIF):</label>
+                <input type="file" name="profile_picture" id="profile_picture" class="form-control" accept="image/jpeg, image/png, image/gif">
+            </div>
+            <button type="submit" class="btn btn-primary">Profilbild ändern</button>
+        </fieldset>
+    </form>
+    <a href="../profile.php" class="btn btn-secondary">Zurück zum Profil</a>
+</div>
 <?php include '../includes/footer.php'; ?>
