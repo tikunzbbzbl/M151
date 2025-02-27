@@ -51,15 +51,6 @@ function secure_session_start() {
     }
 }
 
-// ------------------------------
-// Definition der BASE_URL-Konstanten
-// ------------------------------
-// Falls die Konstante BASE_URL noch nicht definiert ist, wird sie hier gesetzt.
-// BASE_URL kann verwendet werden, um absolute Pfade in der Anwendung zu vereinheitlichen.
-if (!defined('BASE_URL')) {
-    // Hier wird der Basis-Pfad auf '/' gesetzt. Passe diesen Wert bei Bedarf an.
-    define('BASE_URL', '/');
-}
 
 // ------------------------------
 // Funktion: is_logged_in()
