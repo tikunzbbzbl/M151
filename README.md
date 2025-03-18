@@ -1,4 +1,4 @@
-# PHP-Projekt mit Bildupload-Funktionalität
+# M151 PHP-Projekt
 
 Dieses Projekt ist eine PHP-basierte Webanwendung, die eine sichere Benutzeranmeldung, Profilbild-Upload und eine Verwaltung von Einträgen mit Bildergalerie ermöglicht.
 
@@ -129,7 +129,7 @@ Dieses Projekt ist eine PHP-basierte Webanwendung, die eine sichere Benutzeranme
    chmod 755 public/uploads/
    ```
 
-5. Platzieren Sie eine Datei mit dem Namen `default_profile.png` im Verzeichnis `public/uploads/` als Standardprofilbild.
+5. Platzieren Sie eine Datei mit dem Namen `placeholder.png` im Verzeichnis `public/uploads/` als Standardprofilbild.
 
 ### Webserver-Konfiguration
 
