@@ -28,6 +28,7 @@ if (function_exists('ist_angemeldet') && ist_angemeldet() && isset($_SESSION['us
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Eigenes CSS -->
     <link href="css/style.css" rel="stylesheet">
+    <link rel="icon" href="uploads/motorcycle_icon.ico" type="image/x-icon">
 </head>
 <body>
     <header>

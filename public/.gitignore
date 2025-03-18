@@ -1,0 +1,4 @@
+uploads/*
+!uploads/motorcycle_icon.ico
+!uploads/placeholder.png
+.DS_Store
