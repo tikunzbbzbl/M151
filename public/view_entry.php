@@ -43,7 +43,7 @@ $bilder = $stmt->fetchAll();
 include_once '../includes/header.php';
 
 // Profilbild des Erstellers anzeigen oder Default verwenden
-$profilbild_pfad = 'uploads/default_profile.png'; // Default path
+$profilbild_pfad = 'uploads/placeholder.png'; // Default path
 if ($eintrag['profilbild'] && file_exists('uploads/' . $eintrag['profilbild'])) {
     $profilbild_pfad = 'uploads/' . $eintrag['profilbild'];
 }
