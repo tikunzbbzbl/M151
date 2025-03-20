@@ -54,6 +54,15 @@ function ist_angemeldet() {
 }
 
 /**
+ * Funktion zur Prüfung, ob ein Benutzer Admin-Rechte hat
+ * 
+ * @return bool True, wenn Benutzer Administrator ist, sonst False
+ */
+function ist_admin() {
+    return ist_angemeldet() && isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1;
+}
+
+/**
  * Funktion, die den Zugriff auf geschützte Seiten nur für angemeldete Benutzer erlaubt
  * Kompetenz C8: Eine angemeldete Person hat Zugriff auf weitere Funktionen
  */
@@ -61,6 +70,17 @@ function nur_angemeldet_zugriff() {
     if (!ist_angemeldet()) {
         // Umleitung zur Anmeldeseite, wenn nicht angemeldet
         header('Location: /login.php?error=login_required');
+        exit;
+    }
+}
+
+/**
+ * Funktion, die den Zugriff auf Admin-Seiten nur für Administratoren erlaubt
+ */
+function nur_admin_zugriff() {
+    if (!ist_admin()) {
+        // Umleitung zum Dashboard, wenn keine Admin-Rechte
+        header('Location: /dashboard.php?error=admin_required');
         exit;
     }
 }

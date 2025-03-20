@@ -46,9 +46,15 @@ if (function_exists('ist_angemeldet') && ist_angemeldet() && isset($_SESSION['us
                         </li>
                         <?php if (function_exists('ist_angemeldet') && ist_angemeldet()): ?>
                             <!-- Menüpunkte für angemeldete Benutzer -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="dashboard.php">Dashboard</a>
-                            </li>
+                            <?php if (function_exists('ist_admin') && ist_admin()): ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="admin_dashboard.php">Admin-Dashboard</a>
+                                </li>
+                            <?php else: ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="dashboard.php">Dashboard</a>
+                                </li>
+                            <?php endif; ?>
                             <li class="nav-item">
                                 <a class="nav-link" href="create_entry.php">Neuer Eintrag</a>
                             </li>

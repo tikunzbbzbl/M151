@@ -30,20 +30,12 @@ include_once '../includes/header.php';
             <div class="jumbotron">
                 <h1 class="display-4">Willkommen zu SYT</h1>
                 <p class="lead">Hier können Sie sich registrieren, anmelden und Ihre Einträge verwalten.</p>
-                <hr class="my-4">
-                <p>Die Website für Triumph fahrer.</p>
-                
+                <hr class="my-4">                              
                 <?php if (!ist_angemeldet()): ?>
                     <!-- Anzeige für nicht angemeldete Benutzer -->
                     <p class="lead">
                         <a class="btn btn-primary btn-lg" href="register.php" role="button">Registrieren</a>
                         <a class="btn btn-success btn-lg" href="login.php" role="button">Anmelden</a>
-                    </p>
-                <?php else: ?>
-                    <!-- Anzeige für angemeldete Benutzer -->
-                    <p class="lead">
-                        <a class="btn btn-primary btn-lg" href="dashboard.php" role="button">Zum Dashboard</a>
-                        <a class="btn btn-danger btn-lg" href="logout.php" role="button">Abmelden</a>
                     </p>
                 <?php endif; ?>
             </div>

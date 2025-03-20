@@ -18,7 +18,12 @@ require_once '../includes/validation.php';
 
 // Weiterleitung, wenn Benutzer bereits angemeldet ist
 if (ist_angemeldet()) {
-    umleiten_zu('dashboard.php');
+    // Prüfe, ob der Benutzer Admin ist und leite entsprechend weiter
+    if (ist_admin()) {
+        umleiten_zu('admin_dashboard.php');
+    } else {
+        umleiten_zu('dashboard.php');
+    }
 }
 
 // Array für Fehlermeldungen
@@ -43,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $passwort = $_POST['passwort']; // Passwort wird nicht bereinigt, da es geprüft wird
         
         // Benutzer in der Datenbank suchen
-        $stmt = $pdo->prepare("SELECT id, vorname, nachname, email, passwort FROM benutzer WHERE email = :email LIMIT 1");
+        $stmt = $pdo->prepare("SELECT id, vorname, nachname, email, passwort, is_admin FROM benutzer WHERE email = :email LIMIT 1");
         $stmt->execute(['email' => $email]); // (C19: SQL-Injection verhindern durch Prepared Statement)
         
         $benutzer = $stmt->fetch();
@@ -53,12 +58,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $benutzer['id'];
             $_SESSION['user_name'] = $benutzer['vorname'] . ' ' . $benutzer['nachname'];
             $_SESSION['user_email'] = $benutzer['email'];
+            $_SESSION['is_admin'] = $benutzer['is_admin']; // Admin-Status in Session speichern
             
             // Neue Session-ID generieren nach Login (C10: Session-Fixation verhindern)
             session_regenerate_id(true);
             
-            // Zum Dashboard weiterleiten
-            umleiten_zu('dashboard.php');
+            // Zum entsprechenden Dashboard weiterleiten
+            if ($benutzer['is_admin']) {
+                umleiten_zu('admin_dashboard.php');
+            } else {
+                umleiten_zu('dashboard.php');
+            }
         } else {
             // Fehlerhafte Anmeldedaten
             $fehler['allgemein'] = "Ungültige E-Mail oder Passwort.";
@@ -92,6 +102,11 @@ include_once '../includes/header.php';
                     <!-- Anzeige von Login-Erfordernis-Meldung -->
                     <?php if (isset($_GET['error']) && $_GET['error'] == 'login_required'): ?>
                         <?php echo warn_meldung("Bitte melden Sie sich an, um auf diese Seite zuzugreifen."); ?>
+                    <?php endif; ?>
+
+                    <!-- Anzeige von Admin-Erfordernis-Meldung -->
+                    <?php if (isset($_GET['error']) && $_GET['error'] == 'admin_required'): ?>
+                        <?php echo warn_meldung("Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen."); ?>
                     <?php endif; ?>
                     
                     <!-- Anmeldungsformular -->
