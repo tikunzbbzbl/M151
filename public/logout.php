@@ -28,5 +28,5 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 // Zur Startseite umleiten
-umleiten_zu('index.php?logged_out=1');
+umleiten_zu('index.php');
 ?>
