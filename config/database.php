@@ -6,8 +6,8 @@
 
 // Datenbankverbindungsinformationen
 $db_host = 'localhost'; // Host-Adresse
-$db_name = 'mein_projekt'; // Datenbankname
-$db_user = 'projekt_user'; // Benutzername mit eingeschränkten Rechten (C12)
+$db_name = 'syt_db'; // Datenbankname
+$db_user = 'syt_user'; // Benutzername mit eingeschränkten Rechten (C12)
 $db_pass = 'sicheres_passwort'; // Sicheres Passwort
 
 // Verbindung zur Datenbank herstellen mit PDO
