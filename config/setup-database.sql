@@ -52,11 +52,11 @@ CREATE TABLE IF NOT EXISTS eintrag_bilder (
 -- 5. Testbenutzer erstellen
 -- Normaler Benutzer (Passwort: 'benutzer123')
 INSERT INTO benutzer (vorname, nachname, email, passwort, is_admin, erstellt_am) 
-VALUES ('Test', 'Benutzer', 'test@test.ch', '$2y$10$cKxHJr1Vr7atGO/J.lX54.MafqJlcuZDkz2GpVv8QiXwMTfR9NZHi', 0, NOW());
+VALUES ('Test', 'Benutzer', 'test@test.ch', '$2y$10$QSKMGGAVoA4dTyQ9w8uqK.QNj1zCS9Uq3dy.Ra/zWrEY3vkJTou5.', 0, NOW());
 
 -- Admin-Benutzer (Passwort: 'admin123')
 INSERT INTO benutzer (vorname, nachname, email, passwort, is_admin, erstellt_am) 
-VALUES ('Admin', 'User', 'admin@test.ch', '$2y$10$YWZhwGKGAtHwavdN8ypzRuhyQQzC/z8SYL6Vj6.Mb.JtQ0SgUHHuO', 1, NOW());
+VALUES ('Admin', 'User', 'admin@test.ch', '$2y$10$JLJ2oHrbVk14oH03Vf6Yl.yxUKsEeDmWQBuRtCAeDXuiE7fTIMTwe', 1, NOW());
 
 -- 6. Beispieleintrag für den Admin erstellen
 INSERT INTO eintraege (benutzer_id, titel, beschreibung, erstellt_am)
